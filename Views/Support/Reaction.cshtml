@@ -1,0 +1,33 @@
+﻿@model IEnumerable<IT_Stat.Models.Reaction>
+
+@{
+    ViewData["Title"] = "Время реакции";
+}
+
+<h1>Время реакции с @ViewBag.Start по @ViewBag.End</h1>
+
+<table class="table" border="2">
+    <thead>
+        <tr>
+            <th>Номер </th>
+            <th>ФИО </th>
+            <th>Дата (назначено) </th>
+            <th>Дата (обработано) </th>
+            <th>Время обработки </th>
+            <th>Время обработки(97%) </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) 
+        {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.RequestID) </td>
+                    <td>@Html.DisplayFor(modelItem => item.FIO) </td>
+                    <td>@Html.DisplayFor(modelItem => item.AppointDate) </td>
+                    <td>@Html.DisplayFor(modelItem => item.UserDate) </td>
+                    <td>@Html.DisplayFor(modelItem => item.ReactionWorkTime) </td>
+                    <td>@Html.DisplayFor(modelItem => item.ReactionWorkTimeFree) </td>
+                </tr>
+        }
+    </tbody>
+</table>
