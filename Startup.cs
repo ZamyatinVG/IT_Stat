@@ -4,15 +4,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace IT_Stat
 {
     public class Startup
     {
+        public static string specialist;
+        public static string group;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -23,6 +21,8 @@ namespace IT_Stat
             services.AddControllersWithViews();
             services.AddDbContext<Models.ServiceDesk>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ServiceDesk")));
+            specialist = Configuration["Specialist"];
+            group = Configuration["Group"];
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
