@@ -139,14 +139,15 @@ namespace IT_Stat.Models
                                                     select *
                                                     from
                                                     (
-                                                    select u.lastname || ' ' || u.firstname AS fio, 'заявка ' || wo.workorderid nodoc, to_char(from_unixtime(wo.resolvedtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD') AS resolvedtime
+                                                    select u.lastname || ' ' || u.firstname AS fio, 'заявка ' || wo.workorderid nodoc, to_char(from_unixtime(wo.resolvedtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD') AS resolvedtime, coalesce(wof.udf_double3::int, 1::int) storypoints
                                                         from workorder wo
                                                         join workorderstates wos on wo.workorderid = wos.workorderid
                                                         join sduser u on wos.ownerid = u.userid
+														left join workorder_fields wof on wo.workorderid = wof.workorderid
                                                         where u.userid in {Startup.specialist}
                                                         and wo.resolvedtime <> 0
                                                     union
-                                                    select u.lastname || ' ' || u.firstname, 'задача ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD')
+                                                    select u.lastname || ' ' || u.firstname, 'задача ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD'), case when td.addtional_cost::int = null or td.addtional_cost::int = 0 then 1 else td.addtional_cost::int end storypoints
                                                         from taskdetails td
                                                         join sduser u on td.ownerid = u.userid
                                                         where u.userid in {Startup.specialist}
@@ -154,14 +155,14 @@ namespace IT_Stat.Models
                                                     ) t
                                                     where t.resolvedtime between '{start}' and '{end}'
                                                 )
-                                                select ' Итого по отделу' fio, null nodoc, null resolvedtime, count(*) storypoints
+                                                select ' Итого по отделу' fio, null nodoc, null resolvedtime, sum(storypoints) storypoints
                                                     from stat
                                                 union
-                                                select fio, null, null, count(*)
+                                                select fio, null, null, sum(storypoints)
                                                     from stat
                                                     group by fio
                                                 union
-                                                select fio, nodoc, resolvedtime, 1
+                                                select fio, nodoc, resolvedtime, storypoints
                                                     from stat
                                                 order by 3 desc, 1
                                         ").ToList();
