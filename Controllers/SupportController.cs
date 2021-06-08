@@ -30,5 +30,13 @@ namespace IT_Stat.Controllers
             ViewBag.End = (end == DateTime.MinValue ? def.AddDays(24) : end).ToString("yyyy.MM.dd");
             return View(Support.Fact(ViewBag.Start, ViewBag.End, _db));
         }
+        public IActionResult Complete(DateTime start, DateTime end)
+        {
+            Program.logger.Info("Обращение к отчету по выполненным заявкам");
+            DateTime def = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            ViewBag.Start = (start == DateTime.MinValue ? def.AddMonths(-1).AddDays(25) : start).ToString("yyyy.MM.dd");
+            ViewBag.End = (end == DateTime.MinValue ? def.AddDays(24) : end).ToString("yyyy.MM.dd");
+            return View(Support.Complete(ViewBag.Start, ViewBag.End, _db));
+        }
     }
 }
