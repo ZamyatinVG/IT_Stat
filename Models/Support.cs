@@ -80,7 +80,7 @@ namespace IT_Stat.Models
 																  AND woh2.operationownerid <> wo.createdbyid
 												   JOIN sduser u ON woh2.operationownerid = u.userid
 												   JOIN categorydefinition cd ON wos.categoryid = cd.categoryid 
-																  AND cd.categoryname not in ('ИТ-02', 'ИТ-02 выполнено', 'Учетная запись')
+																  AND cd.categoryid not in {Startup.category}
 												   WHERE wo.createdbyid not in {Startup.specialist}
 												   GROUP BY wo.workorderid, u.userid, (u.lastname || ' ') || u.firstname, wo.createdtime, woh2.operationtime) t
 											   WHERE t.r = 1) t
@@ -229,7 +229,7 @@ namespace IT_Stat.Models
 																				u.lastname || ' ' || u.firstname AS fio, 
 																				from_unixtime(wo.createdtime / 1000) + '03:00:00'::interval AS createdate, 
 																				from_unixtime(min(woh.operationtime) / 1000) + '03:00:00'::interval AS groupdate, 
-																				from_unixtime(wo.completedtime / 1000) + '03:00:00'::interval AS userdate
+																				from_unixtime(wo.resolvedtime / 1000) + '03:00:00'::interval AS userdate
 																			   FROM workorder wo
 																			   JOIN workorderstates wos ON wo.workorderid = wos.workorderid
 																							AND wos.ownerid in {Startup.specialist}
@@ -243,7 +243,7 @@ namespace IT_Stat.Models
 																												   )
 																			   JOIN sduser u ON wos.ownerid = u.userid
 																			   JOIN categorydefinition cd ON wos.categoryid = cd.categoryid 
-																							  AND cd.categoryname not in ('ИТ-02', 'ИТ-02 выполнено', 'Учетная запись')
+																							  AND cd.categoryid not in {Startup.category}
 																			   GROUP BY wo.workorderid, u.userid, (u.lastname || ' ') || u.firstname, wo.createdtime) t
 																		) t
 																	   JOIN (SELECT DISTINCT from_unixtime(wo.createdtime / 1000)::date AS diffdate

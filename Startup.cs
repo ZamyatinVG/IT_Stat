@@ -11,6 +11,7 @@ namespace IT_Stat
     {
         public static string specialist;
         public static string group;
+        public static string category;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -23,6 +24,7 @@ namespace IT_Stat
                 options.UseNpgsql(Configuration.GetConnectionString("ServiceDesk")));
             specialist = Configuration["Specialist"];
             group = Configuration["Group"];
+            category = Configuration["Category"];
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
