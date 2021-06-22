@@ -13,17 +13,19 @@
             <th>Номер </th>
             <th>Дата решения </th>
             <th>Story Points </th>
+            <th>Передано в Jira </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model) 
         {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.FIO) </td>
-                    <td>@Html.DisplayFor(modelItem => item.NoDoc) </td>
-                    <td>@Html.DisplayFor(modelItem => item.ResolvedTime) </td>
-                    <td>@Html.DisplayFor(modelItem => item.StoryPoints) </td>
-                </tr>
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.FIO) </td>
+            <td>@Html.DisplayFor(modelItem => item.NoDoc) </td>
+            <td>@Html.DisplayFor(modelItem => item.ResolvedTime) </td>
+            <td>@Html.DisplayFor(modelItem => item.StoryPoints) </td>
+            <td>@Html.DisplayFor(modelItem => item.ToJira) </td>
+        </tr>
         }
     </tbody>
 </table>

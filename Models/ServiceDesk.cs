@@ -29,5 +29,6 @@ namespace IT_Stat.Models
         public string NoDoc { get; set; }
         public string ResolvedTime { get; set; }
         public int StoryPoints { get; set; }
+        public int ToJira { get; set; }
     }
 }
