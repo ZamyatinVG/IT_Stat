@@ -13,7 +13,10 @@
             <th>Номер </th>
             <th>Дата решения </th>
             <th>Story Points </th>
+            <th>Story Points (заявки) </th>
             <th>Передано в Jira </th>
+            <th>Передано улучшений </th>
+            <th>% переданных ошибок </th>
         </tr>
     </thead>
     <tbody>
@@ -24,7 +27,10 @@
             <td>@Html.DisplayFor(modelItem => item.NoDoc) </td>
             <td>@Html.DisplayFor(modelItem => item.ResolvedTime) </td>
             <td>@Html.DisplayFor(modelItem => item.StoryPoints) </td>
+            <td>@Html.DisplayFor(modelItem => item.StoryPointsRequest) </td>
             <td>@Html.DisplayFor(modelItem => item.ToJira) </td>
+            <td>@Html.DisplayFor(modelItem => item.Improve) </td>
+            <td>@Html.DisplayFor(modelItem => item.ErrorToJira) </td>
         </tr>
         }
     </tbody>

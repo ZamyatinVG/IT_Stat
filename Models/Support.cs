@@ -139,16 +139,22 @@ namespace IT_Stat.Models
 												select *
 												from
 												(
-												select u.lastname || ' ' || u.firstname AS fio, 'заявка ' || wo.workorderid nodoc, to_char(from_unixtime(wo.resolvedtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD') AS resolvedtime, coalesce(wof.udf_double3::int, 1::int) storypoints,
-													   case when wos.statusid = 2101 then coalesce(wof.udf_double3::int, 1::int) else 0 end tojira
+												select u.lastname || ' ' || u.firstname AS fio, 'заявка ' || wo.workorderid nodoc, to_char(from_unixtime(wo.resolvedtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD') AS resolvedtime, 
+														coalesce(wof.udf_double3::int, 1::int) storypoints,
+														case when wos.categoryid in {Startup.category} then 0 else coalesce(wof.udf_double3::int, 1::int) end storypointsrequest,
+														case when wos.statusid = 2101 then coalesce(wof.udf_double3::int, 1::int) else 0 end tojira,
+														case when id.itemid is not null then coalesce(wof.udf_double3::int, 1::int) else 0 end improve
 												from workorder wo
 												join workorderstates wos on wo.workorderid = wos.workorderid
 												join sduser u on wos.ownerid = u.userid
 												left join workorder_fields wof on wo.workorderid = wof.workorderid
+												left join itemdefinition id on wos.itemid = id.itemid and id.name in ('Доработка нового функционала', 'Развитие собственной доработки', 'Развитие стандартного функционала')
 												where u.userid in {Startup.specialist}
 												and wo.resolvedtime <> 0
 												union
-												select u.lastname || ' ' || u.firstname, 'задача ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD'), case when td.addtional_cost::int = null or td.addtional_cost::int = 0 then 1 else td.addtional_cost::int end storypoints, 0 tojira
+												select u.lastname || ' ' || u.firstname, 'задача ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD'), 
+														case when td.addtional_cost::int = null or td.addtional_cost::int = 0 then 1 else td.addtional_cost::int end storypoints, 
+														0 storypointsrequest, 0 tojira, 0 improve
 												from taskdetails td
 												join sduser u on td.ownerid = u.userid
 												where u.userid in {Startup.specialist}
@@ -156,14 +162,14 @@ namespace IT_Stat.Models
 												) t
 												where t.resolvedtime between '{start}' and '{end}'
 											)
-											select ' Итого по отделу' fio, null nodoc, null resolvedtime, sum(storypoints) storypoints, sum(tojira) tojira
+											select ' Итого по отделу' fio, null nodoc, null resolvedtime, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(tojira) tojira, sum(improve) improve, round(100 * sum(tojira - improve) / sum(storypointsrequest - improve)::numeric, 2) errortojira
 												from stat
 											union
-											select fio, null, null, sum(storypoints), sum(tojira) tojira
+											select fio, null, null, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(tojira) tojira, sum(improve) improve, round(100 * sum(tojira - improve) / sum(storypointsrequest - improve)::numeric, 2) errortojira
 												from stat
 												group by fio
 											union
-											select fio, nodoc, resolvedtime, storypoints, tojira
+											select fio, nodoc, resolvedtime, storypoints, storypointsrequest, tojira, improve, null errortojira
 												from stat
 											order by 3 desc, 1
                                         ").ToList();
