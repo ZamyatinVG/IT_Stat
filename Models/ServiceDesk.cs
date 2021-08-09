@@ -31,7 +31,7 @@ namespace IT_Stat.Models
         public int StoryPoints { get; set; }
         public int StoryPointsRequest { get; set; }
         public int ToJira { get; set; }
-        public int Improve { get; set; }
+        public int ImproveToJira { get; set; }
         public double? ErrorToJira { get; set; }
     }
 }

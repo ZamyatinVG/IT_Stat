@@ -143,7 +143,7 @@ namespace IT_Stat.Models
 														coalesce(wof.udf_double3::int, 1::int) storypoints,
 														case when wos.categoryid in {Startup.category} then 0 else coalesce(wof.udf_double3::int, 1::int) end storypointsrequest,
 														case when wos.statusid = 2101 then coalesce(wof.udf_double3::int, 1::int) else 0 end tojira,
-														case when id.itemid is not null then coalesce(wof.udf_double3::int, 1::int) else 0 end improve
+														case when wos.statusid = 2101 and id.itemid is not null then coalesce(wof.udf_double3::int, 1::int) else 0 end improvetojira
 												from workorder wo
 												join workorderstates wos on wo.workorderid = wos.workorderid
 												join sduser u on wos.ownerid = u.userid
@@ -162,14 +162,14 @@ namespace IT_Stat.Models
 												) t
 												where t.resolvedtime between '{start}' and '{end}'
 											)
-											select ' Итого по отделу' fio, null nodoc, null resolvedtime, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(tojira) tojira, sum(improve) improve, round(100 * sum(tojira - improve) / sum(storypointsrequest - improve)::numeric, 2) errortojira
+											select ' Итого по отделу' fio, null nodoc, null resolvedtime, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(tojira) tojira, sum(improvetojira) improvetojira, round(100 * sum(tojira - improvetojira) / sum(storypointsrequest - improvetojira)::numeric, 2) errortojira
 												from stat
 											union
-											select fio, null, null, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(tojira) tojira, sum(improve) improve, round(100 * sum(tojira - improve) / sum(storypointsrequest - improve)::numeric, 2) errortojira
+											select fio, null, null, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(tojira) tojira, sum(improvetojira) improvetojira, round(100 * sum(tojira - improvetojira) / sum(storypointsrequest - improvetojira)::numeric, 2) errortojira
 												from stat
 												group by fio
 											union
-											select fio, nodoc, resolvedtime, storypoints, storypointsrequest, tojira, improve, null errortojira
+											select fio, nodoc, resolvedtime, storypoints, storypointsrequest, tojira, improvetojira, null errortojira
 												from stat
 											order by 3 desc, 1
                                         ").ToList();
