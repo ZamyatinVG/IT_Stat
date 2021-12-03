@@ -78,6 +78,7 @@ namespace IT_Stat.Models
 												   JOIN workorderhistory woh2 ON wo.workorderid = woh2.workorderid 
 																  AND woh2.operationownerid in {Startup.specialist}
 																  AND woh2.operationownerid <> wo.createdbyid
+																  AND NOT (woh2.operationownerid = 1217 and to_char(from_unixtime(woh2.operationtime / 1000), 'YYYY.MM.DD') > '2021.11.07')
 												   JOIN sduser u ON woh2.operationownerid = u.userid
 												   JOIN categorydefinition cd ON wos.categoryid = cd.categoryid 
 																  AND cd.categoryid not in {Startup.category}
@@ -150,6 +151,7 @@ namespace IT_Stat.Models
 												left join workorder_fields wof on wo.workorderid = wof.workorderid
 												left join itemdefinition id on wos.itemid = id.itemid and id.name in ('Доработка нового функционала', 'Развитие собственной доработки', 'Развитие стандартного функционала')
 												where u.userid in {Startup.specialist}
+												and not (u.userid = 1217 and to_char(from_unixtime(wo.resolvedtime / 1000), 'YYYY.MM.DD') > '2021.11.07')
 												and wo.resolvedtime <> 0
 												union
 												select u.lastname || ' ' || u.firstname, 'задача ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD'), 
@@ -158,6 +160,7 @@ namespace IT_Stat.Models
 												from taskdetails td
 												join sduser u on td.ownerid = u.userid
 												where u.userid in {Startup.specialist}
+												and not (u.userid = 1217 and to_char(from_unixtime(td.actualendtime / 1000), 'YYYY.MM.DD') > '2021.11.07')
 												and td.actualendtime  <> 0
 												) t
 												where t.resolvedtime between '{start}' and '{end}'

@@ -4,8 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>86946b4e-64db-4178-aef4-df462dd0ad15</UserSecretsId>
     <Authors>ZamyatinVG</Authors>
-    <Version>0.9.7</Version>
-    <Company>© Askona 2021</Company>
+    <Version>0.9.8</Version>
+    <Company></Company>
   </PropertyGroup>
 
   <ItemGroup>
