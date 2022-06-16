@@ -30,6 +30,7 @@ namespace IT_Stat.Models
         public string ResolvedTime { get; set; }
         public int StoryPoints { get; set; }
         public int StoryPointsRequest { get; set; }
+        public int StoryPointsLinkedRequest { get; set; }
         public int ToJira { get; set; }
         public int ImproveToJira { get; set; }
         public double? ErrorToJira { get; set; }
