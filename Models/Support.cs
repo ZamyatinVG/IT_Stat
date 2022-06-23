@@ -144,20 +144,18 @@ namespace IT_Stat.Models
 														coalesce(wof.udf_double3::int, 1::int) storypoints,
 														case when wos.categoryid in {Startup.category} then 0 else coalesce(wof.udf_double3::int, 1::int) end storypointsrequest,
 														case when wos.haslinkedrequest = 't' or linkedworkorderid is not null then coalesce(wof.udf_double3::int, 1::int) else 0 end storypointslinkedrequest,
-														case when wos.statusid = 2101 then coalesce(wof.udf_double3::int, 1::int) else 0 end tojira,
-														case when wos.statusid = 2101 and id.itemid is not null then coalesce(wof.udf_double3::int, 1::int) else 0 end improvetojira
+														case when wos.statusid = 2101 then coalesce(wof.udf_double3::int, 1::int) else 0 end tojira
 												from workorder wo
 												join workorderstates wos on wo.workorderid = wos.workorderid
 												join sduser u on wos.ownerid = u.userid
 												left join workorder_fields wof on wo.workorderid = wof.workorderid
-												left join itemdefinition id on wos.itemid = id.itemid and id.name in ('Доработка нового функционала', 'Развитие собственной доработки', 'Развитие стандартного функционала')
 												where u.userid in {Startup.specialist}
 												and not (u.userid = 1217 and to_char(from_unixtime(wo.resolvedtime / 1000), 'YYYY.MM.DD') > '2021.11.07')
 												and wo.resolvedtime <> 0
 												union
 												select u.lastname || ' ' || u.firstname, 'задача ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD'), 
 														case when td.addtional_cost::int = null or td.addtional_cost::int = 0 then 1 else td.addtional_cost::int end storypoints, 
-														0 storypointsrequest, 0 storypointslinkedrequest, 0 tojira, 0 improve
+														0 storypointsrequest, 0 storypointslinkedrequest, 0 tojira
 												from taskdetails td
 												join sduser u on td.ownerid = u.userid
 												where u.userid in {Startup.specialist}
@@ -166,14 +164,14 @@ namespace IT_Stat.Models
 												) t
 												where t.resolvedtime between '{start}' and '{end}'
 											)
-											select ' Итого по отделу' fio, null nodoc, null resolvedtime, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(storypointslinkedrequest) storypointslinkedrequest, sum(tojira) tojira, sum(improvetojira) improvetojira, round(100 * sum(tojira - improvetojira) / sum(storypointsrequest - improvetojira)::numeric, 2) errortojira
+											select ' Итого по отделу' fio, null nodoc, null resolvedtime, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(storypointslinkedrequest) storypointslinkedrequest, sum(tojira) tojira, round(100 * sum(tojira) / sum(storypointsrequest)::numeric, 2) percenttojira
 												from stat
 											union
-											select fio, null, null, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(storypointslinkedrequest) storypointslinkedrequest, sum(tojira) tojira, sum(improvetojira) improvetojira, round(100 * sum(tojira - improvetojira) / sum(storypointsrequest - improvetojira)::numeric, 2) errortojira
+											select fio, null, null, sum(storypoints) storypoints, sum(storypointsrequest) storypointsrequest, sum(storypointslinkedrequest) storypointslinkedrequest, sum(tojira) tojira, round(100 * sum(tojira) / sum(storypointsrequest)::numeric, 2) percenttojira
 												from stat
 												group by fio
 											union
-											select fio, nodoc, resolvedtime, storypoints, storypointsrequest, storypointslinkedrequest, tojira, improvetojira, null errortojira
+											select fio, nodoc, resolvedtime, storypoints, storypointsrequest, storypointslinkedrequest, tojira, null percenttojira
 												from stat
 											order by 3 desc, 1
                                         ").ToList();

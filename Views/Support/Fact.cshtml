@@ -16,8 +16,7 @@
             <th>Story Points (заявки) </th>
             <th>Story Points (связанные заявки) </th>
             <th>Передано в Jira </th>
-            <th>Передано улучшений </th>
-            <th>% переданных ошибок </th>
+            <th>% переданного </th>
         </tr>
     </thead>
     <tbody>
@@ -31,8 +30,7 @@
             <td>@Html.DisplayFor(modelItem => item.StoryPointsRequest) </td>
             <td>@Html.DisplayFor(modelItem => item.StoryPointsLinkedRequest) </td>
             <td>@Html.DisplayFor(modelItem => item.ToJira) </td>
-            <td>@Html.DisplayFor(modelItem => item.ImproveToJira) </td>
-            <td>@Html.DisplayFor(modelItem => item.ErrorToJira) </td>
+            <td>@Html.DisplayFor(modelItem => item.PercentToJira) </td>
         </tr>
         }
     </tbody>
