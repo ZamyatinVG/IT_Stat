@@ -79,6 +79,7 @@ namespace IT_Stat.Models
 																  AND woh2.operationownerid in {Startup.specialist}
 																  AND woh2.operationownerid <> wo.createdbyid
 																  AND NOT (woh2.operationownerid = 1217 and to_char(from_unixtime(woh2.operationtime / 1000), 'YYYY.MM.DD') > '2021.11.07')
+                                                                  AND NOT (woh2.operationownerid = 21486 and to_char(from_unixtime(woh2.operationtime / 1000), 'YYYY.MM.DD') > '2022.05.31')
 												   JOIN sduser u ON woh2.operationownerid = u.userid
 												   JOIN categorydefinition cd ON wos.categoryid = cd.categoryid 
 																  AND cd.categoryid not in {Startup.category}
@@ -151,6 +152,7 @@ namespace IT_Stat.Models
 												left join workorder_fields wof on wo.workorderid = wof.workorderid
 												where u.userid in {Startup.specialist}
 												and not (u.userid = 1217 and to_char(from_unixtime(wo.resolvedtime / 1000), 'YYYY.MM.DD') > '2021.11.07')
+												and not (u.userid = 21486 and to_char(from_unixtime(wo.resolvedtime / 1000), 'YYYY.MM.DD') > '2022.05.31')
 												and wo.resolvedtime <> 0
 												union
 												select u.lastname || ' ' || u.firstname, 'задача ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD'), 
@@ -160,6 +162,7 @@ namespace IT_Stat.Models
 												join sduser u on td.ownerid = u.userid
 												where u.userid in {Startup.specialist}
 												and not (u.userid = 1217 and to_char(from_unixtime(td.actualendtime / 1000), 'YYYY.MM.DD') > '2021.11.07')
+												and not (u.userid = 21486 and to_char(from_unixtime(td.actualendtime / 1000), 'YYYY.MM.DD') > '2022.05.31')
 												and td.actualendtime  <> 0
 												) t
 												where t.resolvedtime between '{start}' and '{end}'
@@ -302,30 +305,3 @@ namespace IT_Stat.Models
 		}
 	}
 }
-/*
-select u.lastname, 'request ' || wo.workorderid nodoc, to_char(from_unixtime(wo.completedtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD') AS completedtime
-  from workorder wo
-  join workorderstates wos on wo.workorderid = wos.workorderid
-  join sduser u on wos.ownerid = u.userid
-  where u.userid in (688, 14460, 1217, 21082, 21485, 23811, 24044, 21486, 21634, 689, 1285, 697)
-  and wo.completedtime <> 0
-union
-select u.lastname, 'request ' || wo.workorderid, to_char(from_unixtime(wo.completedtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD') AS completedtime
-  from arc_workorder wo
-  join sduser u on wo.ownerid = u.userid
-  where u.userid in (688, 14460, 1217, 21082, 21485, 23811, 24044, 21486, 21634, 689, 1285, 697)
-  and wo.completedtime <> 0
-union
-select u.lastname, 'task ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD') AS completedtime
-  from taskdetails td
-  join sduser u on td.ownerid = u.userid
-  where u.userid in (688, 14460, 1217, 21082, 21485, 23811, 24044, 21486, 21634, 689, 1285, 697)
-  and td.actualendtime  <> 0
-union
-select u.lastname, 'task ' || td.taskid, to_char(from_unixtime(td.actualendtime / 1000) + '03:00:00'::interval, 'YYYY.MM.DD') AS completedtime
-  from arc_taskdetails td
-  join sduser u on td.ownerid = u.userid
-  where u.userid in (688, 14460, 1217, 21082, 21485, 23811, 24044, 21486, 21634, 689, 1285, 697)
-  and td.actualendtime  <> 0
-order by lastname, completedtime
-*/
